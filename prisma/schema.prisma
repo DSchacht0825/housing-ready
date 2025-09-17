@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Client {
+  id                   String   @id @default(cuid())
+  name                 String
+  clarityId            String?  @unique
+  outreachWorker       String?
+  dateOfEntry          DateTime @default(now())
+
+  // Phase tracking
+  phase1Id             Boolean  @default(false)
+  phase2SocialSecurity Boolean  @default(false)
+  phase3BirthCert      Boolean  @default(false)
+  phase4ProofOfIncome  Boolean  @default(false)
+
+  // Housing status
+  housingPaperworkCompleted Boolean @default(false)
+  housed               Boolean  @default(false)
+  housingDate          DateTime?
+
+  // Financial
+  hasBankAccount       Boolean  @default(false)
+  hasSavings           Boolean  @default(false)
+  hasChime             Boolean  @default(false)
+
+  // Support needs
+  needsDetox           Boolean  @default(false)
+  detoxReferralMadeTo  String?
+  needsMentalHealth    Boolean  @default(false)
+  mentalHealthReferralMadeTo String?
+
+  // Notes
+  notes                String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
