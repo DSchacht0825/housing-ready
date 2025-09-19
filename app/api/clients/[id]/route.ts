@@ -17,7 +17,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       WHERE id = ?
     `)
 
-    stmt.run(
+    await stmt.run(
       data.name,
       data.clarityId || null,
       data.outreachWorker || null,
@@ -38,8 +38,22 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       params.id
     )
 
-    const client = db.prepare('SELECT * FROM clients WHERE id = ?').get(params.id)
-    return NextResponse.json(client)
+    const client = await db.prepare('SELECT * FROM clients WHERE id = ?').get(params.id)
+    const transformedClient = {
+      ...client,
+      phase1Id: Boolean((client as any).phase1Id),
+      phase2SocialSecurity: Boolean((client as any).phase2SocialSecurity),
+      phase3BirthCert: Boolean((client as any).phase3BirthCert),
+      phase4ProofOfIncome: Boolean((client as any).phase4ProofOfIncome),
+      housingPaperworkCompleted: Boolean((client as any).housingPaperworkCompleted),
+      housed: Boolean((client as any).housed),
+      hasBankAccount: Boolean((client as any).hasBankAccount),
+      hasSavings: Boolean((client as any).hasSavings),
+      hasChime: Boolean((client as any).hasChime),
+      needsDetox: Boolean((client as any).needsDetox),
+      needsMentalHealth: Boolean((client as any).needsMentalHealth)
+    }
+    return NextResponse.json(transformedClient)
   } catch (error) {
     console.error('Database error:', error)
     return NextResponse.json({ error: 'Failed to update client' }, { status: 500 })
@@ -49,7 +63,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
     const stmt = db.prepare('DELETE FROM clients WHERE id = ?')
-    stmt.run(params.id)
+    await stmt.run(params.id)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Database error:', error)

@@ -3,8 +3,22 @@ import { db } from '@/lib/db'
 
 export async function GET() {
   try {
-    const clients = db.prepare('SELECT * FROM clients ORDER BY createdAt DESC').all()
-    return NextResponse.json(clients)
+    const clients = await db.prepare('SELECT * FROM clients ORDER BY createdAt DESC').all()
+    const transformedClients = clients.map((client: any) => ({
+      ...client,
+      phase1Id: Boolean(client.phase1Id),
+      phase2SocialSecurity: Boolean(client.phase2SocialSecurity),
+      phase3BirthCert: Boolean(client.phase3BirthCert),
+      phase4ProofOfIncome: Boolean(client.phase4ProofOfIncome),
+      housingPaperworkCompleted: Boolean(client.housingPaperworkCompleted),
+      housed: Boolean(client.housed),
+      hasBankAccount: Boolean(client.hasBankAccount),
+      hasSavings: Boolean(client.hasSavings),
+      hasChime: Boolean(client.hasChime),
+      needsDetox: Boolean(client.needsDetox),
+      needsMentalHealth: Boolean(client.needsMentalHealth)
+    }))
+    return NextResponse.json(transformedClients)
   } catch (error) {
     console.error('Database error:', error)
     return NextResponse.json({ error: 'Failed to fetch clients' }, { status: 500 })
@@ -29,7 +43,7 @@ export async function POST(request: Request) {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
-    stmt.run(
+    await stmt.run(
       id,
       data.name,
       data.clarityId || null,
@@ -50,8 +64,22 @@ export async function POST(request: Request) {
       data.notes || null
     )
 
-    const client = db.prepare('SELECT * FROM clients WHERE id = ?').get(id)
-    return NextResponse.json(client)
+    const client = await db.prepare('SELECT * FROM clients WHERE id = ?').get(id)
+    const transformedClient = {
+      ...client,
+      phase1Id: Boolean((client as any).phase1Id),
+      phase2SocialSecurity: Boolean((client as any).phase2SocialSecurity),
+      phase3BirthCert: Boolean((client as any).phase3BirthCert),
+      phase4ProofOfIncome: Boolean((client as any).phase4ProofOfIncome),
+      housingPaperworkCompleted: Boolean((client as any).housingPaperworkCompleted),
+      housed: Boolean((client as any).housed),
+      hasBankAccount: Boolean((client as any).hasBankAccount),
+      hasSavings: Boolean((client as any).hasSavings),
+      hasChime: Boolean((client as any).hasChime),
+      needsDetox: Boolean((client as any).needsDetox),
+      needsMentalHealth: Boolean((client as any).needsMentalHealth)
+    }
+    return NextResponse.json(transformedClient)
   } catch (error) {
     console.error('Database error:', error)
     return NextResponse.json({ error: 'Failed to create client' }, { status: 500 })
