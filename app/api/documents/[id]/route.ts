@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const document = await db.prepare(`
+    const document = db.prepare(`
       SELECT fileData, fileName, fileType
       FROM documents
       WHERE id = ?
@@ -42,7 +42,7 @@ export async function DELETE(
 ) {
   try {
     const stmt = db.prepare('DELETE FROM documents WHERE id = ?')
-    const result = await stmt.run(params.id)
+    const result = stmt.run(params.id)
 
     if (result.changes === 0) {
       return NextResponse.json(

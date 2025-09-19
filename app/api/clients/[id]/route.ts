@@ -17,7 +17,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       WHERE id = ?
     `)
 
-    await stmt.run(
+    stmt.run(
       data.name,
       data.clarityId || null,
       data.outreachWorker || null,
@@ -38,7 +38,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       params.id
     )
 
-    const client = await db.prepare('SELECT * FROM clients WHERE id = ?').get(params.id)
+    const client = db.prepare('SELECT * FROM clients WHERE id = ?').get(params.id) as any
     const transformedClient = {
       ...client,
       phase1Id: Boolean((client as any).phase1Id),
@@ -63,7 +63,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
     const stmt = db.prepare('DELETE FROM clients WHERE id = ?')
-    await stmt.run(params.id)
+    stmt.run(params.id)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Database error:', error)

@@ -3,7 +3,7 @@ import { db } from '@/lib/db'
 
 export async function GET() {
   try {
-    const clients = await db.prepare('SELECT * FROM clients ORDER BY createdAt DESC').all()
+    const clients = db.prepare('SELECT * FROM clients ORDER BY createdAt DESC').all()
     const transformedClients = clients.map((client: any) => ({
       ...client,
       phase1Id: Boolean(client.phase1Id),
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
-    await stmt.run(
+    stmt.run(
       id,
       data.name,
       data.clarityId || null,
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
       data.notes || null
     )
 
-    const client = await db.prepare('SELECT * FROM clients WHERE id = ?').get(id)
+    const client = db.prepare('SELECT * FROM clients WHERE id = ?').get(id) as any
     const transformedClient = {
       ...client,
       phase1Id: Boolean((client as any).phase1Id),

@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `)
 
-    await stmt.run(
+    stmt.run(
       documentId,
       clientId,
       file.name,
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const documents = await db.prepare(`
+    const documents = db.prepare(`
       SELECT id, fileName, fileType, fileSize, uploadedBy, uploadedAt
       FROM documents
       WHERE clientId = ?

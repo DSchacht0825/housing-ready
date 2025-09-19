@@ -1,0 +1,15 @@
+[build]
+aptPkgs = ["python3", "build-essential", "pkg-config"]
+
+[phases.setup]
+nixPkgs = ["nodejs_18", "python3", "gcc"]
+nixLibs = ["libsqlite"]
+
+[phases.install]
+cmds = ["npm ci"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "npm run start"
