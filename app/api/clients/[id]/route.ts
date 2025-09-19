@@ -17,7 +17,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       WHERE id = ?
     `)
 
-    stmt.run(
+    await stmt.run(
       data.name,
       data.clarityId || null,
       data.outreachWorker || null,
@@ -38,7 +38,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       params.id
     )
 
-    const client = db.prepare('SELECT * FROM clients WHERE id = ?').get(params.id)
+    const client = await db.prepare('SELECT * FROM clients WHERE id = ?').get(params.id)
     return NextResponse.json(client)
   } catch (error) {
     console.error('Database error:', error)
@@ -49,7 +49,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
     const stmt = db.prepare('DELETE FROM clients WHERE id = ?')
-    stmt.run(params.id)
+    await stmt.run(params.id)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Database error:', error)
