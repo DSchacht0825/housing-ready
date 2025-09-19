@@ -38,6 +38,18 @@ async function getDb() {
         notes TEXT,
         createdAt TEXT NOT NULL DEFAULT (datetime('now')),
         updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
+      );
+
+      CREATE TABLE IF NOT EXISTS documents (
+        id TEXT PRIMARY KEY,
+        clientId TEXT NOT NULL,
+        fileName TEXT NOT NULL,
+        fileType TEXT NOT NULL,
+        fileSize INTEGER NOT NULL,
+        fileData BLOB NOT NULL,
+        uploadedBy TEXT,
+        uploadedAt TEXT NOT NULL DEFAULT (datetime('now')),
+        FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE
       )
     `)
   }
