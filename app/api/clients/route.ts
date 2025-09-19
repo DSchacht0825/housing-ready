@@ -3,7 +3,7 @@ import { db } from '@/lib/db'
 
 export async function GET() {
   try {
-    const clients = await db.prepare('SELECT * FROM clients ORDER BY createdAt DESC').all()
+    const clients = db.prepare('SELECT * FROM clients ORDER BY createdAt DESC').all()
     return NextResponse.json(clients)
   } catch (error) {
     console.error('Database error:', error)
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
-    await stmt.run(
+    stmt.run(
       id,
       data.name,
       data.clarityId || null,
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
       data.notes || null
     )
 
-    const client = await db.prepare('SELECT * FROM clients WHERE id = ?').get(id)
+    const client = db.prepare('SELECT * FROM clients WHERE id = ?').get(id)
     return NextResponse.json(client)
   } catch (error) {
     console.error('Database error:', error)
